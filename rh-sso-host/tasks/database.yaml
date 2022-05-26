@@ -1,0 +1,41 @@
+---
+- name: Database | Include vars of {{ database_providers }}
+  include_vars:
+    file: "{{ database_providers }}.yaml"
+    name: database
+
+- name: Database | Download driver {{ database.driver_jar }}
+  ansible.builtin.get_url:
+    url: "{{ database_driver_url }}"
+    dest: /tmp
+
+- name: Database | Add module {{ database.module_name }}
+  ansible.builtin.shell: jboss-cli.sh --commands="module add --name={{ database.module_name }} --resources=/tmp/{{ database.driver_jar }} --dependencies=javax.api\,javax.transaction.api"
+  register: module
+  failed_when: 
+    - module.rc == 1
+    - '"Module " ~ database.module_name ~ " already exists" not in module.stdout'
+  changed_when:
+    - module.rc == 0
+    - '"" in module.stdout' 
+
+- name: Database | Add driver {{ profile }}
+  ansible.builtin.shell: jboss-cli.sh --commands="embed-server --server-config={{ profile }}.xml, /subsystem=datasources/jdbc-driver={{ database.driver_name }}:add(driver-name={{ database.driver_name }},driver-module-name={{ database.module_name }},driver-xa-datasource-class-name={{ database.driver_xa_class }})"
+  register: driver
+  failed_when: 
+    - driver.rc == 1
+    - '"Duplicate resource" not in driver.stdout'
+  changed_when:
+    - driver.rc == 0
+    - '"success" in driver.stdout'
+
+- name: Database | View driver to datasource KeycloakDS
+  ansible.builtin.shell: jboss-cli.sh --commands="embed-server --server-config={{ profile }}.xml, /subsystem=datasources/data-source=KeycloakDS:read-attribute(name=driver-name)" --output-json
+  register: dh2
+  changed_when: false
+
+- name: Database | configure datasource  KeycloakDS with driver {{ database_providers }}
+  ansible.builtin.shell: jboss-cli.sh --commands="embed-server --server-config={{ profile }}.xml, data-source --name=KeycloakDS --driver-name={{ database.driver_name }} --connection-url={{ database_jdbc_url }} --user-name={{ database_jdbc_user }} --password={{ database_jdbc_password }} --max-pool-size={{ database_jdbc_max_pool }} --valid-connection-checker-class-name={{ database.valid }} --exception-sorter-class-name={{ database.exception }} --validate-on-match=true --background-validation=false"
+  register: configure
+  when: (dh2['stdout'] | from_json)['result'] == "h2"
+

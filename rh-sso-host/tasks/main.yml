@@ -1,0 +1,11 @@
+---
+# tasks file for rh-sso-host
+
+- name: rh-sso | Task install rh-sso
+  include_tasks: install.yaml
+
+- name: rh-sso | Task config Datasourece
+  include_tasks: database.yaml
+
+- name: rh-sso | Task configure service
+  include_tasks: configure.yaml 

@@ -1,0 +1,34 @@
+---
+- name: Unistall
+  hosts: all
+  tasks: 
+    - name: rh-sso | Install dependencies
+      ansible.builtin.dnf:
+        name:
+          - java-1.8.0-openjdk-devel
+          - python3-cryptography
+          - unzip
+        state: absent
+
+    - name: rh-sso | create User
+      ansible.builtin.user:
+        name: jboss-eap
+        state: absent
+
+    - name: rh-sso | configure $JBOSS_CLI
+      ansible.builtin.file:
+        path: /etc/profile.d/jboss.sh
+        state: absent
+
+    - name: rh-sso | Remove home
+      ansible.builtin.file:
+        path: /opt/rh-sso-7.5
+        state: absent
+
+    - name: rh-sso | remove /etc/default/jboss-eap.conf
+      ansible.builtin.file:
+        path: /etc/default/jboss-eap.conf
+        state: absent
+
+    - name: rh-sso | Reboot
+      ansible.builtin.reboot:

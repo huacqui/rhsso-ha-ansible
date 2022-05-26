@@ -1,0 +1,70 @@
+---
+- name: rh-sso | Install dependencies
+  ansible.builtin.dnf:
+    name:
+       - java-1.8.0-openjdk-devel
+       - python3-cryptography
+       - unzip
+    state: present
+
+- name: rh-sso | Downlaod RH-SSO
+  ansible.builtin.unarchive:
+    src: "{{ rh_sso_url }}"
+    dest: /opt
+    remote_src: yes
+    list_files: true
+    keep_newer: yes
+  register: rh_sso_pkg
+     
+- name: rh-sso | Set directory install
+  ansible.builtin.set_fact:
+    rh_sso_home: "{{ rh_sso_pkg.dest }}/{{ rh_sso_pkg.files[0].split('/')[0] }}"
+
+- name: rh-sso | create User
+  ansible.builtin.user:
+    name: "{{ rh_sso_system_user }}"
+    shell: /bin/nologin
+    system: true
+    create_home: yes
+    home: "{{ rh_sso_home }}"
+    state: present
+
+- name: rh-sso | configure $JBOSS_BIN
+  ansible.builtin.copy:
+    content: 'export PATH=$PATH:"{{ rh_sso_home }}/bin"'
+    dest: /etc/profile.d/jboss.sh
+    mode: '0644'
+
+- name: rh-sso | Add {{ rh_sso_user }} user to rh-sso
+  ansible.builtin.shell: add-user-keycloak.sh -u {{ rh_sso_user }} -p {{ rh_sso_password }}
+  register: adduser
+  failed_when:
+    - adduser.rc == 1
+    - '"already" not in adduser.stderr'
+  changed_when:
+    - adduser.rc == 0 
+
+- name: rh-sso | Include tasks apply patch
+  include_tasks: patch.yaml
+  when: 'apply_patch == true'
+
+- name: rh-sso | Create directory /var/log/jboss-eap
+  ansible.builtin.file:
+    path: /var/log/jboss-eap
+    state: directory
+    owner: "{{ rh_sso_system_user }}"
+    group: "{{ rh_sso_system_user }}"
+
+- name: rh-sso | create rh-sso service
+  ansible.builtin.copy:
+    src: "{{ rh_sso_home }}/bin/init.d/jboss-eap-rhel.sh"
+    dest: /etc/init.d/rh-sso
+    mode: '0755'
+    remote_src: yes
+
+- name: rh-sso | Change home permision
+  ansible.builtin.file:
+    path: "{{ rh_sso_pkg.dest }}/{{ rh_sso_pkg.files[0] }}"
+    owner: "{{ rh_sso_system_user }}"
+    group: "{{ rh_sso_system_user }}"
+    recurse: yes

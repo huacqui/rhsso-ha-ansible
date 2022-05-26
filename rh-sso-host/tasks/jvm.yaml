@@ -1,0 +1,17 @@
+---
+- name: rh_sso | JVM Tunning mssql
+  ansible.builtin.blockinfile:
+    path: "{{ rh_sso_home }}/bin/standalone.conf"
+    marker: "# {mark} SQL configuration"
+    state: present
+    block: |
+      # Reference https://access.redhat.com/solutions/4961621
+      JAVA_OPTS="$JAVA_OPTS -Djava.security.disableSystemPropertiesFile=true"
+  when: database_providers == 'mssql' 
+
+
+- name: rh_sso | JVM Tunning
+  ansible.builtin.lineinfile:
+    path:  "{{ rh_sso_home }}/bin/standalone.conf"
+    regexp: 'JAVA_OPTS="-Xms'
+    line: JAVA_OPTS="-Xms{{ (ansible_memory_mb.real.total * 0.5) | round | int }}m -Xmx{{ (ansible_memory_mb.real.total * 0.5) | round | int }}m -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=256m -Djava.net.preferIPv4Stack=true -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent -XX:MaxGCPauseMillis=500 -XX:CompressedClassSpaceSize={{ (ansible_memory_mb.real.total * 0.05) | round | int }}m"

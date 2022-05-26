@@ -1,0 +1,22 @@
+---
+- name: rh-sso | create folder to save patches
+  ansible.builtin.file:
+    path: /tmp/patches
+    state: directory
+
+- name: rh-sso | Download patches
+  ansible.builtin.get_url:
+    url: "{{ item }}"
+    dest: /tmp/patches
+  with_items: "{{ patches }}"
+  register: dir_patches
+
+- name: rh-sso | Apply patch
+  ansible.builtin.shell: jboss-cli.sh --commands="patch apply {{ item }}"
+  with_items: "{{ dir_patches.results | map(attribute='dest') | list }}"
+  register: apply_patche
+  failed_when:
+    - apply_patche.rc == 1
+    - '"The patch does not contain metadata for currently installed" not in apply_patche.stdout'
+  changed_when:
+    - apply_patche.rc == 0

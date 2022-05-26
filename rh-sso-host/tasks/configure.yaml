@@ -1,0 +1,9 @@
+---
+- name: Cluster | Include tasks {{ protocol }} cluster
+  include_tasks: '{{ protocol }}.yaml'
+  when: profile == "standalone-ha"
+
+- name: Cluster | Include jvm tunnig
+  include_tasks: jvm.yaml
+  when: profile == "standalone-ha"
+

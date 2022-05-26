@@ -1,0 +1,27 @@
+---
+- name: Cluster | Include vars of jgroups-{{ protocol }}
+  include_vars:
+    file: "{{ protocol }}.yaml"
+    name: multicast
+
+- name: rh-sso | create jboss-eap.conf
+  ansible.builtin.blockinfile:
+    create: yes
+    path: /etc/default/jboss-eap.conf
+    marker: "# {mark} Datasystems with Asnible"
+    state: present
+    block: |
+      JBOSS_HOME="{{ rh_sso_home}}"
+      JBOSS_USER="{{ rh_sso_system_user }}"
+      JBOSS_MODE="standalone"
+      JBOSS_CONFIG="{{ profile }}.xml"
+      JBOSS_CONSOLE_LOG="/var/log/jboss-eap/console.log"
+      JBOSS_OPTS="-bmanagement {{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}  -b {{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }} -Djboss.modcluster.multicast.address={{ multicast.default_adress }} -Djboss.default.multicast.address={{ multicast.default_adress }} -Djboss.mail.server.host=localhost -Djboss.node.name={{ ansible_ssh_host }} -Djboss.tx.node.id={{ ansible_ssh_host }}"
+
+- name: Cluster | enabled multicast ports to firewalld
+  ansible.posix.firewalld:
+    port: "{{ item }}"
+    permanent: yes
+    state: enabled
+    immediate: yes
+  loop: "{{ multicast.rhsso_ports }}"

@@ -1,0 +1,5 @@
+---
+# defaults file for rh-sso-host
+profile: standalone
+apply_patch: false
+protocol: udp

@@ -1,0 +1,7 @@
+---
+driver_jar: "{{ database_driver_url.split('/')[ database_driver_url.split('/') | length - 1 ] }}"
+module_name: com.microsoft
+driver_name: sqlserver
+driver_xa_class: com.microsoft.sqlserver.jdbc.SQLServerXADataSource
+valid: org.jboss.jca.adapters.jdbc.extensions.mssql.MSSQLValidConnectionChecker
+exception: org.jboss.jca.adapters.jdbc.extensions.mssql.MSSQLExceptionSorter

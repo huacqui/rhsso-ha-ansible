@@ -1,0 +1,6 @@
+---
+rhsso_ports: 
+  - 55200/udp
+  - 54200/udp
+modcluster_adress: 224.0.1.105
+default_adress: 230.0.0.4
