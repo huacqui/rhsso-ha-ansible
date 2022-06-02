@@ -1,10 +1,13 @@
 ---
 - name: Cluster | enabled ajp ports to firewalld
   ansible.posix.firewalld:
-    port: 8009/tcp
+    port: "{{ item }}"
     permanent: yes
     state: enabled
     immediate: yes
+  with_items:
+    - 8080/tcp
+    - 8009/tcp
 
 - name: Cluster | Config sysctl
   ansible.posix.sysctl:
@@ -19,11 +22,11 @@
     - { name: net.core.somaxconn, value: 5000 }
 
 - name: Cluster | Config pam limits
-  community.general.pam_limits:
+  pam_limits:
     domain: "{{ rh_sso_system_user }}" 
     limit_type: "{{ item }}"
     limit_item: nofile
-    value: 500000
+    value: '500000'
   with_items:
     - soft
     - hard

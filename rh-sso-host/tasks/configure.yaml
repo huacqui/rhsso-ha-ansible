@@ -5,5 +5,10 @@
 
 - name: Cluster | Include jvm tunnig
   include_tasks: jvm.yaml
-  when: profile == "standalone-ha"
 
+- name: Cluster | Include SO tunning
+  include_tasks: so.yaml
+
+- name: Cluster | Include tasks to proxy
+  include_tasks: proxy.yaml
+  when: profile == "standalone-ha"
