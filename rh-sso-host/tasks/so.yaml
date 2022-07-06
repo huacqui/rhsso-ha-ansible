@@ -1,6 +1,6 @@
 ---
 - name: Cluster | enabled ajp ports to firewalld
-  ansible.posix.firewalld:
+  firewalld:
     port: "{{ item }}"
     permanent: yes
     state: enabled
@@ -10,7 +10,7 @@
     - 8009/tcp
 
 - name: Cluster | Config sysctl
-  ansible.posix.sysctl:
+  sysctl:
     name: "{{ item.name }}"
     value: "{{ item.value }}"
     sysctl_set: yes
