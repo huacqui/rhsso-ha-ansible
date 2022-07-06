@@ -16,7 +16,12 @@
      cmd: jboss-cli.sh --commands="patch apply {{ item }}"
   with_items: "{{ dir_patches.results | map(attribute='dest') | list }}"
   register: apply_patche
-  
+  failed_when:
+    - apply_patche.rc == 1
+    - '"The patch does not contain metadata for currently installed" not in apply_patche.stdout'
+  changed_when:
+    - apply_patche.rc == 0
+    
 - name: rh-sso | debug
   ansible.builtin.debug:
     msg: "{{ apply_patche }}"
