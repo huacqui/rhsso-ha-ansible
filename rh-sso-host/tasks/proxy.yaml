@@ -1,6 +1,8 @@
 ---
 - name: rh-sso | Enable proxy  {{ profile }}
-  ansible.builtin.shell: jboss-cli.sh --commands="embed-server --server-config={{ profile }}.xml, /subsystem=undertow/server=default-server/http-listener=default:write-attribute(name=proxy-address-forwarding,value=true)"
+  shell: 
+    cmd: jboss-cli.sh --commands="embed-server --server-config={{ profile }}.xml, /subsystem=undertow/server=default-server/http-listener=default:write-attribute(name=proxy-address-forwarding,value=true)"
 
 - name: rh-sso | Enable repiclate session  {{ profile }}
-  ansible.builtin.shell: jboss-cli.sh --commands="embed-server --server-config={{ profile }}.xml, /subsystem=infinispan/cache-container=keycloak/distributed-cache=sessions:write-attribute(name=owners,value=2)"
+  shell: 
+    cmd: jboss-cli.sh --commands="embed-server --server-config={{ profile }}.xml, /subsystem=infinispan/cache-container=keycloak/distributed-cache=sessions:write-attribute(name=owners,value=2)"
