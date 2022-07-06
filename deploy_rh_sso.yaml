@@ -5,17 +5,16 @@
      rh_sso_system_user : jboss-eap
      rh_sso_user: admin
      rh_sso_password: redhat
-     rh_sso_url: https://nexus.t.st/repository/ocp_raw_local/rh-sso-7.5.0-server-dist.zip
+     rh_sso_url: https://nexus.localt.st/repository/ocp_raw_local/rh-sso-7.5.0-server-dist.zip
      database_providers: mssql
-     database_driver_url: https://nexus.t.st/repository/ocp_raw_local/mssql-jdbc-9.2.1.jre8.jar
-     database_jdbc_url: jdbc:sqlserver://10.100.100.77:1433;DatabaseName=keycloak
+     database_driver_url: https://nexus.localt.st/repository/ocp_raw_local/mssql-jdbc-10.2.1.jre8.jar
+     database_jdbc_url: jdbc:sqlserver://10.14.0.211:1433;DatabaseName=keycloak
      database_jdbc_user: keycloak
      database_jdbc_password: 123456789
      database_jdbc_max_pool: 20
      apply_patch: true
      patches:
-       - https://nexus.t.st/repository/ocp_raw_local/rh-sso-7.5.1-patch.zip
-       - https://nexus.t.st/repository/ocp_raw_local/rh-sso-7.5.2-patch.zip
+       - https://nexus.localt.st/repository/ocp_raw_local/rh-sso-7.5.2-patch.zip
      profile: standalone-ha
   roles:
    - rh-sso-host
