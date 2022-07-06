@@ -19,4 +19,4 @@
   
 - name: rh-sso | debug
   ansible.builtin.debug:
-    msg: {{ apply_patche }}
+    msg: "{{ apply_patche }}"
