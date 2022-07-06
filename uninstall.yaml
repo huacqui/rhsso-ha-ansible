@@ -1,6 +1,6 @@
 ---
 - name: Unistall
-  hosts: all
+  hosts: rh_sso
   tasks: 
     - name: rh-sso | Install dependencies
       ansible.builtin.dnf:
