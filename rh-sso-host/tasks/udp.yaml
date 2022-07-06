@@ -19,7 +19,7 @@
       JBOSS_OPTS="-bmanagement {{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}  -b {{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }} -Djboss.modcluster.multicast.address={{ multicast.default_adress }} -Djboss.default.multicast.address={{ multicast.default_adress }} -Djboss.mail.server.host=localhost -Djboss.node.name={{ ansible_ssh_host }} -Djboss.tx.node.id={{ ansible_ssh_host }} -Djboss.bind.address.private={{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
 
 - name: Cluster | enabled multicast ports to firewalld
-  ansible.posix.firewalld:
+  firewalld:
     port: "{{ item }}"
     permanent: yes
     state: enabled
