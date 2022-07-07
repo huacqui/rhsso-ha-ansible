@@ -8,7 +8,7 @@
      rh_sso_url: https://nexus.localt.st/repository/ocp_raw_local/rh-sso-7.5.0-server-dist.zip
      database_providers: mssql
      database_driver_url: https://nexus.localt.st/repository/ocp_raw_local/mssql-jdbc-10.2.1.jre8.jar
-     database_jdbc_url: jdbc:sqlserver://10.14.0.211:1433;DatabaseName=keycloak
+     database_jdbc_url: jdbc:sqlserver://10.14.0.211:1433;DatabaseName=keycloak;encrypt=false
      database_jdbc_user: keycloak
      database_jdbc_password: 123456789
      database_jdbc_max_pool: 20
