@@ -12,7 +12,7 @@
     state: present
     block: |
       JBOSS_HOME="{{ rh_sso_home}}"
-      JBOSS_USER="{{ rh_sso_system_user }}"
+      JBOSS_USER={{ rh_sso_system_user }}
       JBOSS_MODE="standalone"
       JBOSS_CONFIG="{{ profile }}.xml"
       JBOSS_CONSOLE_LOG="/var/log/jboss-eap/console.log"
