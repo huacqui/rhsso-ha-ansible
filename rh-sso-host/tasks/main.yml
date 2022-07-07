@@ -8,4 +8,7 @@
   include_tasks: database.yaml
 
 - name: rh-sso | Task configure service
-  include_tasks: configure.yaml 
+  include_tasks: configure.yaml
+  
+- name: rh-sso | Task fix permission
+  include_tasks: permission.yaml 
