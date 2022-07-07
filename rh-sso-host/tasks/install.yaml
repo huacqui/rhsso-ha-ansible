@@ -36,7 +36,8 @@
     mode: '0644'
 
 - name: rh-sso | Add {{ rh_sso_user }} user to rh-sso
-  ansible.builtin.shell: add-user-keycloak.sh -u {{ rh_sso_user }} -p {{ rh_sso_password }}
+  shell: 
+    cmd: add-user-keycloak.sh -u {{ rh_sso_user }} -p {{ rh_sso_password }}
   register: adduser
   failed_when:
     - adduser.rc == 1
