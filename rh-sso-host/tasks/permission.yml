@@ -1,0 +1,12 @@
+---
+- name: rh-sso | Change home permision
+  ansible.builtin.file:
+    path: "{{  rh_sso_home }}"
+    owner: "{{ rh_sso_system_user }}"
+    group: "{{ rh_sso_system_user }}"
+    recurse: yes
+
+- name: rh-sso | start service jboss-eap
+  systemd:
+    state: started
+    name: rh-sso
