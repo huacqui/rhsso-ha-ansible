@@ -1,6 +1,6 @@
 ---
 - name: Deploy rh-sso
-  hosts: rh_sso
+  hosts: all
   vars:
      rh_sso_system_user : jboss-eap
      rh_sso_user: admin
